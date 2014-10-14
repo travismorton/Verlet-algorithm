@@ -6,25 +6,35 @@ import random
 
 # initialize variables
 dt = .01
+initialDx = .01
 boxWidth = 10.0
 boxHeight = 10.0
+particleNumber = 16  # should be a square number
 
-#initialize arrays
-r = numpy.array([[0, 0], [0, 1], [0, 2], [0, 3],
-                [1, 0], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1],
-                [2, 2], [2, 3], [3, 0], [3, 1], [3, 2], [3, 3]])
-r =r.astype(numpy.float64)
-v = numpy.zeros((16, 2))
-a = numpy.zeros((16, 2))
+# initialize position, velocity,
+# and acceleration arrays
+r = numpy.zeros((particleNumber, 2))
+v = numpy.zeros((particleNumber, 2))
+a = numpy.zeros((particleNumber, 2))
 
+# filling r array with equally spaced particles
 w = numpy.ndenumerate(r)
+count = 0
 for x, y in w:
-    r[x[0]][x[1]] += (random.random()-.5)/10.0
+    xStep = boxWidth / float(math.sqrt(particleNumber))
+    yStep = boxHeight / float(math.sqrt(particleNumber))
+    if x[1] == 0:
+        r[x[0]][x[1]] = count / int(math.sqrt(particleNumber)) * \
+                        xStep + (random.random() - .5) * initialDx
+        count += 1
+    else:
+        r[x[0]][x[1]] = x[0] % math.sqrt(particleNumber) * \
+                        yStep + (random.random() - .5) * initialDx
 
+# Fills velocity array with random velocities homogeneously
+# distributed between -3/2 and 3/2
 z = numpy.ndenumerate(v)
 for x, y in z:
-    v[x[0]][x[1]] = random.random()*3.0-1.5
+    v[x[0]][x[1]] = random.random() * 3.0 - 1.5
 
-print r
-print v
-#iterate through arrays with time step
+# iterate through arrays with time step
