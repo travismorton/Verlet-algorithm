@@ -38,11 +38,17 @@ z = numpy.ndenumerate(v)
 for x, y in z:
     v[x[0]][x[1]] = random.random() * 3.0 - 1.5
 
-# finding distance between a list of points and one point
+# finds distance between a list of points and one point
 # and returns a list of distances
 def distance(p0, p1, dim):
-    return 0
+    diff = numpy.abs(p0 - p1)
+    diff = numpy.where(diff > 0.5 * dim, dim - diff, diff)
+    dist = numpy.sqrt((diff ** 2).sum(axis = -1))
+    return dist
 
+
+#dimensions = numpy.array([boxWidth, boxHeight])
+#print distance(r, r[15], dimensions)
 
 # function for finding force/acceleration
 def forcex(dx, dy):
@@ -50,21 +56,24 @@ def forcex(dx, dy):
 
 
 def forcey(dx, dy):
-    return -24 * dy * ((dx ** 2 + dy ** 2) ** 3 - 2) / (dx ** 2 + dy ** 2) ** 7
+    return -24.0 * dy * ((dx ** 2 + dy ** 2) ** 3 - 2.0) / (dx ** 2 + dy ** 2) ** 7
 
 
-# Define functions for iterating r, v, and a
-def iterR(rcurrent, ):
-    return 0
+for i in range(particleNumber):
+    aPrev = a
+    a[i, 0] = 0
+    a[i, 1] = 0
+    x = r[i, 0]
+    y = r[i, 1]
+    for j in range(particleNumber):
+        # might need to switch particle i and j around...
+        dx = r[j, 0] - x
+        dy = r[j, 1] - y
+        if math.sqrt(dx ** 2 + dy ** 2) < 3.0 and dx != 0 and dy != 0:
+            a[i, 0] += forcex(dx, dy)
+            a[i, 1] += forcey(dx, dy)
 
-
-def iterV():
-    return 0
-
-
-def iterA():
-    return 0
 
 # iterate through arrays with time step
-for t in range(int(timeLength / dt)):
-    print t
+# for t in range(int(timeLength / dt)):
+
