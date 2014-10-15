@@ -10,6 +10,7 @@ initialDx = .01
 boxWidth = 10.0
 boxHeight = 10.0
 particleNumber = 16  # should be a square number
+timeLength = 100
 
 # initialize position, velocity,
 # and acceleration arrays
@@ -37,4 +38,33 @@ z = numpy.ndenumerate(v)
 for x, y in z:
     v[x[0]][x[1]] = random.random() * 3.0 - 1.5
 
+# finding distance between a list of points and one point
+# and returns a list of distances
+def distance(p0, p1, dim):
+    return 0
+
+
+# function for finding force/acceleration
+def forcex(dx, dy):
+    return -24 * dx * ((dx ** 2 + dy ** 2) ** 3 - 2) / (dx ** 2 + dy ** 2) ** 7
+
+
+def forcey(dx, dy):
+    return -24 * dy * ((dx ** 2 + dy ** 2) ** 3 - 2) / (dx ** 2 + dy ** 2) ** 7
+
+
+# Define functions for iterating r, v, and a
+def iterR(rcurrent, ):
+    return 0
+
+
+def iterV():
+    return 0
+
+
+def iterA():
+    return 0
+
 # iterate through arrays with time step
+for t in range(int(timeLength / dt)):
+    print t
