@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # Initialize variables
-dt = .01
+dt = .001
 initialDr = .01
 boxWidth = 10.0
 boxHeight = 10.0
 particleNumber = 16  # should be a square number
-timeLength = 1
+timeLength = 2.5
 vRange = 3.0
 r2 = []  # average distance squared list, in order of time steps
 
@@ -63,14 +63,31 @@ for t in range(int(timeLength / dt)):
     # periodic forces
     rPseudo = numpy.copy(r)
     for particle in range(particleNumber):
+        # left edge
         if vRange >= rPseudo[particle, 0] >= 0:
             rPseudo = numpy.append(rPseudo, [[r[particle, 0] + boxWidth, r[particle, 1]]], axis=0)
+        # right edge
         if boxWidth >= rPseudo[particle, 0] >= boxWidth - vRange:
             rPseudo = numpy.append(rPseudo, [[r[particle, 0] - boxWidth, r[particle, 1]]], axis=0)
+        # bottom edge
         if vRange >= rPseudo[particle, 1] >= 0:
             rPseudo = numpy.append(rPseudo, [[r[particle, 0], r[particle, 1] + boxHeight]], axis=0)
+        # top edge
         if boxHeight >= rPseudo[particle, 1] >= boxHeight - vRange:
             rPseudo = numpy.append(rPseudo, [[r[particle, 0], r[particle, 1] - boxHeight]], axis=0)
+        # bottom left corner
+        if (vRange >= rPseudo[particle, 0] >= 0) and (vRange >= rPseudo[particle, 1] >= 0):
+            rPseudo = numpy.append(rPseudo, [[r[particle, 0] + boxWidth, r[particle, 1] + boxHeight]], axis=0)
+        # bottom right corner
+        if (boxWidth >= rPseudo[particle, 0] >= boxWidth - vRange) and (vRange >= rPseudo[particle, 1] >= 0):
+            rPseudo = numpy.append(rPseudo, [[r[particle, 0] - boxWidth, r[particle, 1] + boxHeight]], axis=0)
+        # top left corner
+        if (vRange >= rPseudo[particle, 0] >= 0) and (boxHeight >= rPseudo[particle, 1] >= boxHeight - vRange):
+            rPseudo = numpy.append(rPseudo, [[r[particle, 0] + boxWidth, r[particle, 1] - boxHeight]], axis=0)
+        # top right corner
+        if (boxWidth >= rPseudo[particle, 0] >= boxWidth - vRange) and (boxHeight >= rPseudo[particle, 1] >=
+                                                                                boxHeight - vRange):
+            rPseudo = numpy.append(rPseudo, [[r[particle, 0] - boxWidth, r[particle, 1] - boxHeight]], axis=0)
 
     aPrev = numpy.copy(a)
     # Calculating force/acceleration matrix using potential function
@@ -82,8 +99,8 @@ for t in range(int(timeLength / dt)):
         y = rPseudo[i][1]
         for j in range(rPseudo.shape[0]):
             # might need to switch particle i and j around...
-            dx = rPseudo[j][0] - x
-            dy = rPseudo[j][1] - y
+            dx = x - rPseudo[j][0]
+            dy = y - rPseudo[j][1]
             if math.sqrt(dx ** 2 + dy ** 2) < vRange and dx != 0 and dy != 0:
                 a[i][0] += forcex(dx, dy)
                 a[i][1] += forcey(dx, dy)
@@ -121,6 +138,18 @@ for t in range(int(timeLength / dt)):
         r2Placeholder += (diff[0] ** 2 + diff[1] ** 2) / particleNumber
     r2.append(r2Placeholder)
 
+    p = 0
+    # print a, v, and r to find t where spike is
+    for i in range(particleNumber):
+        if 1000 < abs(a[i, 0]):
+            print i
+            print aPrev
+            print a
+            p = 1
+            break
+
+    if p == 1:
+        break
 x = numpy.split(r, 2, axis=1)[0]
 y = numpy.split(r, 2, axis=1)[1]
 
@@ -129,7 +158,7 @@ y = numpy.split(r, 2, axis=1)[1]
 #    line.set_data(data[..., :num])
 #    return line,
 
-
+print r2
 #fig = plt.figure()
 #l, = plt.scatter([], [])
 #plt.xlim(0, 1)
