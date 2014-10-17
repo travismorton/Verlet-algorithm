@@ -171,7 +171,7 @@ def fv(v, T):
 
 print T
 
-hkl.dump(r, 'coords.hkl')
+#hkl.dump(r, 'coords.hkl')
 
 v = numpy.arange(0., max(s), .01)
 o = numpy.vectorize(fv)
@@ -181,7 +181,10 @@ t = numpy.arange(0., timeLength, dt)
 
 f = plt.figure(1)
 af = f.add_subplot(111)
-af.plot(t, r2)  # plots average distance travelled  vs time
+plt.title(r'$\langle r^2 \rangle$ vs $\Delta t$')
+plt.xlabel(r'$\Delta t$')
+plt.ylabel(r'$\langle r^2 \rangle$')
+af.plot(t, r2, alpha=.75, c="green")  # plots average distance travelled vs time
 f.canvas.draw()
 
 g = plt.figure(2)
@@ -192,9 +195,13 @@ g.canvas.draw()
 
 h = plt.figure(3)
 ah = h.add_subplot(111)
+plt.title(r'Particle Positions at Time = 15')
+plt.xlabel(r'X')
+plt.ylabel(r'Y')
+colors = numpy.random.rand(particleNumber)
 x = numpy.split(r, 2, axis=1)[0]  # x array of positions
 y = numpy.split(r, 2, axis=1)[1]  # y array of positions
-ah.scatter(x, y)  # plots x and y coordinates
+ah.scatter(x, y, s=150 * numpy.pi, c=colors, alpha=0.5)  # plots x and y coordinates
 h.canvas.draw()
 
 plt.show()

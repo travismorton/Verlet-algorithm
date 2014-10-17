@@ -14,7 +14,7 @@ initialDr = .01  # .01 for problem 1 and 0 for problem 2 and 3
 boxWidth = 10.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
 boxHeight = 10.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
 particleNumber = 16  # should be a square number
-timeLength = 4.0  # 4.0 for r2 calculation, can be less for temp calculation
+timeLength = 2.0  # 4.0 for r2 calculation, can be less for temp calculation
 vRange = 3.0
 initialDv = 1  # .1 for problem 1 and .0001 for problem 2 and 3
 r2 = []  # average distance squared list, in order of time steps
@@ -160,7 +160,7 @@ def run():
             for i in range(particleNumber):
                 s.append(math.sqrt(v[i][0] ** 2 + v[i][1] ** 2))
 
-for i in range(1):  # 300 looks nice for maxwell-boltzmann distribution, 1 for r2 vs t plot and r scatter plot
+for i in range(300):  # 300 looks nice for maxwell-boltzmann distribution, 1 for r2 vs t plot and r scatter plot
     run()
     print i
 
@@ -185,12 +185,18 @@ print "fit: " + str(fit)
 
 f = plt.figure(1)
 af = f.add_subplot(111)
-af.plot(t, r2, t, output(t))  # plots average distance travelled vs time
-af.plot(t, output(t))
+plt.title(r'$\langle r^2 \rangle$ vs $\Delta t$')
+plt.xlabel(r'$\Delta t$')
+plt.ylabel(r'$\langle r^2 \rangle$')
+af.plot(t, r2, alpha=.5, c="green")  # plots average distance travelled vs time
+af.plot(t, output(t), c="red")
 f.canvas.draw()
 
 g = plt.figure(2)
 ag = g.add_subplot(111)
+plt.title(r'Velocity vs Occurrence')
+plt.xlabel(r'Velocity')
+plt.ylabel(r'Occurrence')
 ag.hist(s, 100, align='mid', normed=1)  # plots histogram of speeds
 ag.plot(v, o(v, T))  # plots maxwell-boltzmann distribution
 g.canvas.draw()
