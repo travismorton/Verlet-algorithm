@@ -10,10 +10,10 @@ import matplotlib.animation as animation
 # Initialize variables
 dt = .01  # .01 for problem 1 and .005 for problem 2 and 3
 initialDr = .01  # .01 for problem 1 and 0 for problem 2 and 3
-boxWidth = 25.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
-boxHeight = 25.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
-particleNumber = 100  # should be a square number
-timeLength = .25
+boxWidth = 10.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
+boxHeight = 10.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
+particleNumber = 16  # should be a square number
+timeLength = 15.0
 vRange = 3.0
 initialDv = 1  # 1 for problem 1 and .0001 for problem 2 and 3
 r2 = []  # average distance squared list, in order of time steps
@@ -158,11 +158,27 @@ def run():
             for i in range(particleNumber):
                 s.append(math.sqrt(v[i][0] ** 2 + v[i][1] ** 2))
 
-for i in range(1):
+for i in range(30):  # 300 looks nice
     run()
 
-plt.hist(s, 100)
+def fv(v):
+    return math.sqrt(2 / math.pi) * v ** 2 * math.pow(math.e, - v ** 2 / 2)
+
+
+v = numpy.arange(0., max(s), .01)
+o = numpy.vectorize(fv)
+
+r2 = numpy.array(r2)
+t = numpy.arange(0., timeLength, dt)
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.hist(s, 100, align='mid', normed=1)  # plots histogram of speeds
+ax.plot(v, o(v))  # plots maxwell-boltzmann distribution
+#ax.plot(t, r2)  # plots average distance travelled  vs time
+fig.canvas.draw()
 plt.show()
+
 
 #x = numpy.split(r, 2, axis=1)[0]
 #y = numpy.split(r, 2, axis=1)[1]
