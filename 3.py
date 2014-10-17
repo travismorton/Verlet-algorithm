@@ -9,42 +9,29 @@ import hickle as hkl
 import matplotlib.animation as animation
 
 # Initialize variables
-dt = .001  # .01 for problem 1 and .005 for problem 2 and 3
 initialDr = 0.0  # .01 for problem 1 and 0 for problem 2 and 3
 boxWidth = 4.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
 boxHeight = 4.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
 particleNumber = 16  # should be a square number
-timeLength = 15.0  # 15.0 is length of time required for part two
+timeLength = 5.0 # 15.0 is length of time required for part two
 vRange = 3.0
-initialDv = .0001  # 1 for problem 1 and .0001 for problem 2 and 3
+initialDv = 1  # 1 for problem 1 and .0001 for problem 2 and .75 to melt in 3
+dt = .005  # / (initialDv/.0001)  # .01 for problem 1 and .005 for problem 2 and 3
 r2 = []  # average distance squared list, in order of time steps
 s = []  # list of speeds for each particle
 
 # initialize position, velocity,
 # and acceleration arrays
-r = numpy.zeros((particleNumber, 2))
+r = hkl.load("coords.hkl", safe=True)
 v = numpy.zeros((particleNumber, 2))
 a = numpy.zeros((particleNumber, 2))
-
-# filling r array with equally spaced particles
-w = numpy.ndenumerate(r)
-count = 0
-for x, y in w:
-    xStep = boxWidth / float(math.sqrt(particleNumber))
-    yStep = boxHeight / float(math.sqrt(particleNumber))
-    if x[1] == 0:
-        r[x[0]][x[1]] = count / int(math.sqrt(particleNumber)) * \
-                        xStep + (random.random() - .5) * initialDr
-        count += 1
-    else:
-        r[x[0]][x[1]] = x[0] % math.sqrt(particleNumber) * \
-                        yStep + (random.random() - .5) * initialDr
 
 # Saving initial r array for use later in calculating
 # total distance travelled, state, etc.
 rInitial = numpy.copy(r)
 
-# Fills velocity array with random velocities homogeneously distributed
+# Fills velocity array with random velocities homogeneously
+# distributed between -3/2 and 3/2
 z = numpy.ndenumerate(v)
 for x, y in z:
     v[x[0]][x[1]] = (random.random() - .5) * initialDv
@@ -71,8 +58,10 @@ def run():
     global initialDv
     global r2
     global s
+    s = []
     # iterate through arrays with time step
     for t in range(int(timeLength / dt)):
+        print float(t)/(timeLength / dt)
         rPrev = numpy.copy(r)
         # Calculating the r array using velocities and accelerations
         # found in the previous time step. Makes use of a periodic boundary
@@ -158,9 +147,7 @@ def run():
             for i in range(particleNumber):
                 s.append(math.sqrt(v[i][0] ** 2 + v[i][1] ** 2))
 
-for i in range(1):  # 300 looks nice
-    run()
-    print i
+run()
 
 T = sum([i ** 2 for i in s]) / 2 / len(s)
 
@@ -168,7 +155,7 @@ def fv(v, T):
     return math.sqrt(2 / math.pi) * v ** 2 / math.pow(T, 3.0 / 2.0) * math.pow(math.e, - v ** 2 / (2 * T))
 
 
-print T
+print "T = " + str(T)
 
 #hkl.dump(r, 'coords.hkl')
 
