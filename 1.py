@@ -7,15 +7,16 @@ import random
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+
 # Initialize variables
 dt = .01  # .01 for problem 1 and .005 for problem 2 and 3
 initialDr = .01  # .01 for problem 1 and 0 for problem 2 and 3
 boxWidth = 10.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
 boxHeight = 10.0  # 4.0 for problem 2 and 3, 10.0 for problem 1
 particleNumber = 16  # should be a square number
-timeLength = 15.0
+timeLength = 4.0  # 4.0 for r2 calculation, can be less for temp calculation
 vRange = 3.0
-initialDv = 1  # 1 for problem 1 and .0001 for problem 2 and 3
+initialDv = 1  # .1 for problem 1 and .0001 for problem 2 and 3
 r2 = []  # average distance squared list, in order of time steps
 s = []  # list of speeds for each particle
 
@@ -71,6 +72,7 @@ def run():
     global initialDv
     global r2
     global s
+    r2 = []
     # iterate through arrays with time step
     for t in range(int(timeLength / dt)):
         rPrev = numpy.copy(r)
@@ -158,12 +160,17 @@ def run():
             for i in range(particleNumber):
                 s.append(math.sqrt(v[i][0] ** 2 + v[i][1] ** 2))
 
-for i in range(30):  # 300 looks nice
+for i in range(1):  # 300 looks nice for maxwell-boltzmann distribution, 1 for r2 vs t plot and r scatter plot
     run()
+    print i
 
-def fv(v):
-    return math.sqrt(2 / math.pi) * v ** 2 * math.pow(math.e, - v ** 2 / 2)
+T = sum([i ** 2 for i in s]) / 2 / len(s)
 
+def fv(v, T):
+    return math.sqrt(2 / math.pi) * v ** 2 / math.pow(T, 3.0 / 2.0) * math.pow(math.e, - v ** 2 / (2 * T))
+
+
+print T
 
 v = numpy.arange(0., max(s), .01)
 o = numpy.vectorize(fv)
@@ -171,14 +178,26 @@ o = numpy.vectorize(fv)
 r2 = numpy.array(r2)
 t = numpy.arange(0., timeLength, dt)
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.hist(s, 100, align='mid', normed=1)  # plots histogram of speeds
-ax.plot(v, o(v))  # plots maxwell-boltzmann distribution
-#ax.plot(t, r2)  # plots average distance travelled  vs time
-fig.canvas.draw()
+f = plt.figure(1)
+af = f.add_subplot(111)
+af.plot(t, r2)  # plots average distance travelled  vs time
+f.canvas.draw()
+
+g = plt.figure(2)
+ag = g.add_subplot(111)
+ag.hist(s, 100, align='mid', normed=1)  # plots histogram of speeds
+ag.plot(v, o(v, T))  # plots maxwell-boltzmann distribution
+g.canvas.draw()
+
+h = plt.figure(3)
+ah = h.add_subplot(111)
+x = numpy.split(r, 2, axis=1)[0]  # x array of positions
+y = numpy.split(r, 2, axis=1)[1]  # y array of positions
+ah.scatter(x, y)  # plots x and y coordinates
+h.canvas.draw()
+
 plt.show()
+raw_input()
 
 
-#x = numpy.split(r, 2, axis=1)[0]
-#y = numpy.split(r, 2, axis=1)[1]
+
