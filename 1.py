@@ -170,7 +170,7 @@ def fv(v, T):
     return math.sqrt(2 / math.pi) * v ** 2 / math.pow(T, 3.0 / 2.0) * math.pow(math.e, - v ** 2 / (2 * T))
 
 
-print T
+print "T = " + str(T)
 
 v = numpy.arange(0., max(s), .01)
 o = numpy.vectorize(fv)
@@ -178,9 +178,15 @@ o = numpy.vectorize(fv)
 r2 = numpy.array(r2)
 t = numpy.arange(0., timeLength, dt)
 
+fit = numpy.polyfit(t, r2, 1)
+output = numpy.poly1d(fit)
+
+print "fit: " + str(fit)
+
 f = plt.figure(1)
 af = f.add_subplot(111)
-af.plot(t, r2)  # plots average distance travelled  vs time
+af.plot(t, r2, t, output(t))  # plots average distance travelled vs time
+af.plot(t, output(t))
 f.canvas.draw()
 
 g = plt.figure(2)

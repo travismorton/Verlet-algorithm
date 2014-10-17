@@ -5,6 +5,7 @@ import math
 import numpy
 import random
 import matplotlib.pyplot as plt
+import hickle as hkl
 import matplotlib.animation as animation
 
 # Initialize variables
@@ -169,6 +170,8 @@ def fv(v, T):
 
 
 print T
+
+hkl.dump(r, 'coords.hkl')
 
 v = numpy.arange(0., max(s), .01)
 o = numpy.vectorize(fv)
